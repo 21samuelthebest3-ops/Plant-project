@@ -1,13 +1,43 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>植物陪伴应用</title>
-    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.10/libs/cn/index.js"></script>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.10/libs/cn/index.js"></script>
+    <script>
+      const cozeWebSDK = new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7527964134026674216', // 默认仙人掌bot
+        },
+        componentProps: {
+          title: '植物陪伴助手',
+        },
+        ui: {
+          base: {
+            icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
+            layout: 'pc',
+            zIndex: 1000,
+          },
+          asstBtn: {
+            isNeed: false,
+          },
+        },
+        auth: {
+          type: 'token',
+          token: 'REDACTED',
+          onRefreshToken: function () {
+            return 'REDACTED'
+          }
+        },
+      });
+      
+      cozeWebSDK.on('error', (err) => {
+        console.error('Coze SDK Error:', err);
+      });
+    </script>
     <style>
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -336,7 +366,7 @@
                 
                 <div class="flex flex-wrap justify-center gap-3">
                     <button id="talk-btn" class="btn btn-primary text-white px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-comment-dots mr-2"></i> 和<span id="current-plant-name">向日葵</span>说话
+                        <i class="fas fa-comment-dots mr-2"></i> 和植物说话
                     </button>
                     <button id="favorite-btn" class="btn bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center relative">
                         <i class="fas fa-heart mr-2"></i> 收藏
@@ -802,9 +832,6 @@
                 // 更新按钮状态
                 prevBtn.disabled = currentPlantIndex === 0;
                 nextBtn.disabled = currentPlantIndex === plants.length - 1;
-                
-                // 更新说话按钮文本
-                document.getElementById('current-plant-name').textContent = plants[currentPlantIndex].name;
                 
                 // 更新收藏状态
                 isFavorite = localStorage.getItem(`isFavorite_${plants[currentPlantIndex].name}`) === 'true';
@@ -1434,111 +1461,6 @@
             });
         }
 
-        // 初始化Coze SDK
-        const cozeWebSDKForCactus = new CozeWebSDK.WebChatClient({
-            config: {
-                bot_id: '7527964134026674216',
-            },
-            componentProps: {
-                title: '仙人掌陪伴助手',
-            },
-            ui: {
-                base: {
-                    icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
-                    layout: 'pc',
-                    zIndex: 1000,
-                },
-                asstBtn: {
-                    isNeed: false,
-                },
-            },
-            auth: {
-                type: 'token',
-                token: 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS',
-                onRefreshToken: function () {
-                    return 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS'
-                }
-            },
-        });
-        
-        const cozeWebSDKForMoss = new CozeWebSDK.WebChatClient({
-            config: {
-                bot_id: '7528782354861604904',
-            },
-            componentProps: {
-                title: '苔藓陪伴助手',
-            },
-            ui: {
-                base: {
-                    icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
-                    layout: 'pc',
-                    zIndex: 1000,
-                },
-                asstBtn: {
-                    isNeed: false,
-                },
-            },
-            auth: {
-                type: 'token',
-                token: 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS',
-                onRefreshToken: function () {
-                    return 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS'
-                }
-            },
-        });
-        
-        const cozeWebSDKForRose = new CozeWebSDK.WebChatClient({
-            config: {
-                bot_id: '7528794618294059042',
-            },
-            componentProps: {
-                title: '玫瑰陪伴助手',
-            },
-            ui: {
-                base: {
-                    icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
-                    layout: 'pc',
-                    zIndex: 1000,
-                },
-                asstBtn: {
-                    isNeed: false,
-                },
-            },
-            auth: {
-                type: 'token',
-                token: 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS',
-                onRefreshToken: function () {
-                    return 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS'
-                }
-            },
-        });
-        
-        const cozeWebSDKForLuckyBamboo = new CozeWebSDK.WebChatClient({
-            config: {
-                bot_id: '7528634187600347178',
-            },
-            componentProps: {
-                title: '富贵竹陪伴助手',
-            },
-            ui: {
-                base: {
-                    icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
-                    layout: 'pc',
-                    zIndex: 1000,
-                },
-                asstBtn: {
-                    isNeed: false,
-                },
-            },
-            auth: {
-                type: 'token',
-                token: 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS',
-                onRefreshToken: function () {
-                    return 'pat_pOf42LgJoUIpsYylP4o6vUm6C5k2L21PH0beFM0NTyxZ2w11zQN4mhUUZua6CFhS'
-                }
-            },
-        });
-
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化本地存储
@@ -1549,20 +1471,29 @@
             
             // 和植物说话按钮
             document.getElementById('talk-btn').addEventListener('click', function() {
+                // 根据当前植物设置不同的bot_id
+                const plantBots = {
+                    "苔藓": "7527964134026674217",
+                    "仙人掌": "7527964134026674216",
+                    "富贵竹": "7527964134026674218",
+                    "玫瑰": "7527964134026674219"
+                };
+                
                 const currentPlant = plants[currentPlantIndex].name;
-                if (currentPlant === '仙人掌') {
-                    cozeWebSDKForCactus.showChatBot();
-                } else if (currentPlant === '苔藓') {
-                    cozeWebSDKForMoss.showChatBot();
-                } else if (currentPlant === '玫瑰') {
-                    cozeWebSDKForRose.showChatBot();
-                } else if (currentPlant === '富贵竹') {
-                    cozeWebSDKForLuckyBamboo.showChatBot();
-                } else {
-                    document.getElementById('talk-modal').style.display = 'flex';
-                    document.getElementById('talk-input').placeholder = `和你的${currentPlant}说点什么吧...`;
-                    loadPlantChat();
-                }
+                const botId = plantBots[currentPlant];
+                
+                // 更新SDK配置
+                cozeWebSDK.updateConfig({
+                    config: {
+                        bot_id: botId
+                    },
+                    componentProps: {
+                        title: `${currentPlant}陪伴助手`
+                    }
+                });
+                
+                // 显示聊天对话框
+                cozeWebSDK.showChatBot();
             });
             
             // 关闭对话模态框

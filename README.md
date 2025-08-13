@@ -1,6 +1,32 @@
-# 植物识别功能说明
+# Plant Companion App
 
-> 文件已迁移为 `README.md`，本文件保留至重命名前的提交历史中。
+基于 OpenRouter GPT-4o 的植物识别 + 植物陪伴演示页面。文件由原始中文文件重命名整理：
+
+- 主页面: `plant-companion-app.html`
+- 配置示例: `config.example.js`（复制为 `config.js` 并填写密钥）
+- 旧版本存档: `legacy/`
+
+## 快速开始
+
+1) 复制配置文件并填写密钥（不要把 `config.js` 提交到 Git）：
+```bash
+cp config.example.js config.js
+```
+编辑 `config.js`：
+```js
+window.APP_CONFIG = {
+  OPENROUTER_API_KEY: "YOUR_OPENROUTER_KEY",
+  COZE_PAT_TOKEN: "YOUR_COZE_PAT",
+  OPENROUTER_MODEL: "openai/gpt-4o"
+};
+```
+
+2) 本地打开页面
+- 直接用浏览器打开 `plant-companion-app.html`
+- 或用静态服务器（推荐）：
+```bash
+npx http-server -p 8080 .
+```
 
 ## 功能概述
 基于 [OpenRouter API](https://openrouter.ai/docs/quickstart) 和 GPT-4o 模型实现的智能植物识别功能。
@@ -27,10 +53,10 @@
 ## 技术实现
 
 ### API集成
-- **服务提供商**: OpenRouter
-- **模型**: OpenAI GPT-4o
-- **API密钥**: 已配置
-- **端点**: https://openrouter.ai/api/v1/chat/completions
+- 服务提供商: OpenRouter
+- 模型: OpenAI GPT-4o（可在 `config.js` 调整）
+- API密钥: 从 `config.js` 读取（不要提交到 Git）
+- 端点: https://openrouter.ai/api/v1/chat/completions
 
 ### 功能流程
 1. 用户拍照或选择照片
@@ -60,6 +86,10 @@
 - 照片清晰度越高识别越准确
 - 植物主体应占据照片主要部分
 - 支持多种植物类型识别
+
+## 安全与合规
+- 不要将 `config.js` 提交到仓库（已在 `.gitignore` 中忽略）
+- 不在代码中硬编码 API Key 或 Token（均改为 `window.APP_CONFIG` 读取）
 
 ## 界面特性
 
