@@ -762,8 +762,8 @@
     <script>
         // 植物数据
         const plants = [
-            { name: "苔藓", image: "图片_20250728131528.jpg", video: "WeChat_20250728131549.mp4", chatKey: "mossChat" },
-            { name: "仙人掌", image: "图片_20250728131537.jpg", video: "WeChat_20250728140340.mp4", chatKey: "cactusChat" },
+            { name: "苔藓", image: "https://s.coze.cn/image/IBl8j7eurhQ", video: "", chatKey: "mossChat" },
+            { name: "仙人掌", image: "https://s.coze.cn/image/x5D5yptx4GM", video: "", chatKey: "cactusChat" },
             { name: "富贵竹", image: "https://s.coze.cn/image/Ll05YvMU1nk", video: "", chatKey: "bambooChat" },
             { name: "玫瑰", image: "https://s.coze.cn/image/ifacFHKcyYQ", video: "", chatKey: "roseChat" }
         ];
@@ -2117,10 +2117,12 @@ nextBtn.disabled = currentPlantIndex === plants.length - 1;
                     return;
                 }
                 
+                // 将按钮与原始文案放到 try 外，避免作用域导致 finally 无法恢复文案
+                const analyzeBtn = document.getElementById('analyze-btn');
+                const originalText = analyzeBtn.innerHTML;
+                
                 try {
                     // 显示加载状态
-                    const analyzeBtn = document.getElementById('analyze-btn');
-                    const originalText = analyzeBtn.innerHTML;
                     analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>AI识别中...';
                     analyzeBtn.disabled = true;
                     
@@ -2157,7 +2159,6 @@ nextBtn.disabled = currentPlantIndex === plants.length - 1;
                     alert(errorMessage);
                 } finally {
                     // 恢复按钮状态
-                    const analyzeBtn = document.getElementById('analyze-btn');
                     analyzeBtn.innerHTML = originalText;
                     analyzeBtn.disabled = false;
                     
@@ -2168,7 +2169,7 @@ nextBtn.disabled = currentPlantIndex === plants.length - 1;
             
             // 尝试单个模型进行植物识别
             async function tryModel(model, imageData, controller) {
-                const API_KEY = (window.APP_CONFIG && window.APP_CONFIG.OPENROUTER_API_KEY) || 'REPLACE_WITH_YOUR_OPENROUTER_API_KEY';
+                const API_KEY = (window.APP_CONFIG && window.APP_CONFIG.OPENROUTER_API_KEY) || '';
                 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
                 
                 // 将base64图片数据转换为Blob
@@ -2339,7 +2340,7 @@ nextBtn.disabled = currentPlantIndex === plants.length - 1;
             
             // 调用OpenRouter API进行植物识别
             async function identifyPlantWithOpenRouter(imageData) {
-                const API_KEY = (window.APP_CONFIG && window.APP_CONFIG.OPENROUTER_API_KEY) || 'REPLACE_WITH_YOUR_OPENROUTER_API_KEY';
+                const API_KEY = (window.APP_CONFIG && window.APP_CONFIG.OPENROUTER_API_KEY) || '';
                 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
                 
                 // 添加超时控制
@@ -2418,6 +2419,12 @@ nextBtn.disabled = currentPlantIndex === plants.length - 1;
                     });
                     console.log('请求数据大小:', JSON.stringify(requestData).length, '字符');
                     
+                    if (!API_KEY) {
+                        throw new Error('未配置 OPENROUTER_API_KEY，请先在 config.js 填写');
+                    }
+                    if (!API_KEY) {
+                        throw new Error('未配置 OPENROUTER_API_KEY，请先在 config.js 填写');
+                    }
                     const response = await fetch(API_URL, {
                         method: 'POST',
                         headers: {
