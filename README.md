@@ -1,5 +1,7 @@
 # 植物识别功能说明
 
+> 文件已迁移为 `README.md`，本文件保留至重命名前的提交历史中。
+
 ## 功能概述
 基于 [OpenRouter API](https://openrouter.ai/docs/quickstart) 和 GPT-4o 模型实现的智能植物识别功能。
 

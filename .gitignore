@@ -1,0 +1,25 @@
+# macOS
+.DS_Store
+
+# Node/npm/yarn/pnpm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# Env and local config
+.env
+.env.*
+config.js
+
+# Local assets not for git
+sounds/*.mp3
+
+
