@@ -10,6 +10,8 @@ async function analyzePhoto() {
         return;
     }
     
+    console.log('🚀 开始植物识别流程');
+    
     // 将按钮与原始文案放到 try 外，避免作用域导致 finally 无法恢复文案
     const analyzeBtn = document.getElementById('analyze-btn');
     const originalText = analyzeBtn.innerHTML;
@@ -65,81 +67,56 @@ async function identifyPlantWithOpenRouter(imageData) {
     const API_KEY = (window.APP_CONFIG && window.APP_CONFIG.OPENROUTER_API_KEY) || '';
     const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
     
-    // 添加超时控制
-    const timeoutDuration = 60000; // 60秒超时
+    // 添加超时控制 - 减少到30秒
+    const timeoutDuration = 30000;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutDuration);
     
     try {
-        // 将base64图片数据转换为Blob
-        const base64Data = imageData.split(',')[1];
-        console.log('图片base64数据长度:', base64Data.length);
+        console.log('📸 开始处理图片...');
+        const overallStartTime = performance.now();
+        const compressStartTime = performance.now();
         
-        // 检查图片数据是否过大
-        if (base64Data.length > 20000000) { // 20MB限制
-            throw new Error('图片文件过大，请选择小于20MB的图片');
-        }
+        // 激进压缩以最大化API响应速度
+        const compressedBase64 = await compressImage(imageData, 256, 256, 0.6);
         
-        const blob = await fetch(`data:image/jpeg;base64,${base64Data}`).then(res => res.blob());
-        console.log('图片Blob大小:', blob.size, '字节');
+        const compressTime = performance.now() - compressStartTime;
+        console.log(`⚡ 图片压缩耗时: ${compressTime.toFixed(2)}ms`);
+        console.log(`📦 原始大小: ${Math.round(imageData.length/1024)}KB → 压缩后: ${Math.round(compressedBase64.length/1024)}KB`);
         
-        // 将图片转换为base64字符串
-        const base64String = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.readAsDataURL(blob);
-        });
-        
-        console.log('转换后的base64字符串长度:', base64String.length);
-        
-        // 压缩图片以减少大小，但保持较高质量
-        const compressedBase64 = await compressImage(base64String, 1024, 768, 0.9);
-        console.log('压缩后的base64字符串长度:', compressedBase64.length);
-        
-        // 使用压缩后的图片
-        const finalBase64String = compressedBase64;
-        
-        // 构建请求数据
+        // 构建请求数据 - 简化提示词以提高响应速度
         const requestData = {
             model: (window.APP_CONFIG && window.APP_CONFIG.OPENROUTER_MODEL) || "openai/gpt-4o",
             messages: [
                 {
                     role: "system",
-                    content: "你是一个世界顶级的植物识别专家，拥有丰富的植物学知识和经验。请仔细分析用户提供的植物照片，运用你的专业知识准确识别植物种类。分析时请考虑以下要素：1. 花的颜色、形状、大小和排列方式 2. 叶片的形状、颜色、纹理和排列 3. 茎干的特征和颜色 4. 整体植株的形态和高度 5. 生长环境和季节特征。即使图片不够清晰，也要根据可见的特征进行专业推断。请用中文回答，包含以下信息：1. 植物名称（中英文）2. 植物科属 3. 植物类型（草本/木本/藤本等）4. 主要特征 5. 生长习性 6. 养护建议 7. 有趣的小知识。如果无法确定具体品种，请提供最接近的植物信息，并说明推断依据。请以JSON格式返回，格式为：{\"name\": \"植物名称\", \"english_name\": \"英文名\", \"family\": \"科属\", \"type\": \"植物类型\", \"features\": \"主要特征\", \"habits\": \"生长习性\", \"care\": \"养护建议\", \"fun_fact\": \"有趣小知识\", \"confidence\": \"识别置信度\", \"reasoning\": \"识别推理过程\"}"
+                    content: "你是植物识别专家。分析图片中的植物，直接返回JSON对象，不要用markdown格式或代码块。格式：{\"name\":\"植物中文名\",\"english_name\":\"英文名\",\"type\":\"类型\",\"features\":\"主要特征\",\"care\":\"养护要点\",\"confidence\":0.9}"
                 },
                 {
                     role: "user",
                     content: [
                         {
                             type: "text",
-                            text: "请仔细分析这张植物照片，运用你的专业知识进行识别。请仔细观察：1. 花的特征（颜色、形状、大小、花瓣数量、花蕊特征）2. 叶片的特征（形状、颜色、边缘、叶脉、排列方式）3. 茎干特征（颜色、粗细、纹理、分枝方式）4. 整体植株形态（高度、生长习性、环境适应性）。请根据这些特征进行专业判断，如果无法确定具体品种，请提供最接近的植物信息，并说明你的推理过程。请确保识别结果的准确性和专业性。"
+                            text: "识别这张植物图片，直接返回JSON对象，不要使用```json```格式。"
                         },
                         {
                             type: "image_url",
                             image_url: {
-                                url: finalBase64String
+                                url: compressedBase64
                             }
                         }
                     ]
                 }
             ],
-            max_tokens: 2000,
-            temperature: 0.05,
-            top_p: 0.9,
-            frequency_penalty: 0.1,
-            presence_penalty: 0.1
+            max_tokens: 300,
+            temperature: 0.1,
+            response_format: { type: "json_object" }
         };
         
         // 发送请求到OpenRouter API
-        console.log('发送请求到OpenRouter API...');
-        console.log('请求URL:', API_URL);
-        console.log('请求头:', {
-            'Authorization': 'Bearer <masked>',
-            'Content-Type': 'application/json',
-            'HTTP-Referer': window.location.origin,
-            'X-Title': 'Plant Companion App'
-        });
-        console.log('请求数据大小:', JSON.stringify(requestData).length, '字符');
+        console.log('🌐 发送请求到OpenRouter API...');
+        console.log(`📊 请求负载大小: ${Math.round(JSON.stringify(requestData).length/1024)}KB`);
+        const apiStartTime = performance.now();
         
         if (!API_KEY) {
             throw new Error('未配置 OPENROUTER_API_KEY，请先在 config.js 填写');
@@ -157,8 +134,11 @@ async function identifyPlantWithOpenRouter(imageData) {
             signal: controller.signal
         });
         
-        console.log('API响应状态:', response.status);
-        console.log('API响应头:', response.headers);
+        const apiTime = performance.now() - apiStartTime;
+        const overallTime = performance.now() - overallStartTime;
+        console.log(`⚡ API调用耗时: ${apiTime.toFixed(2)}ms`);
+        console.log(`🏁 总耗时: ${overallTime.toFixed(2)}ms`);
+        console.log('✅ API响应状态:', response.status);
         
         if (!response.ok) {
             const errorText = await response.text();
@@ -178,8 +158,24 @@ async function identifyPlantWithOpenRouter(imageData) {
             
             // 尝试解析JSON格式的响应
             try {
-                const plantInfo = JSON.parse(content);
-                console.log('解析的植物信息:', plantInfo);
+                // 清理可能的markdown代码块格式
+                let cleanContent = content.trim();
+                if (cleanContent.startsWith('```json')) {
+                    cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+                } else if (cleanContent.startsWith('```')) {
+                    cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+                }
+                
+                const plantInfo = JSON.parse(cleanContent);
+                console.log('🌿 解析的植物信息:', plantInfo);
+                
+                // 性能总结
+                console.log(`\n📈 性能总结:
+                - 压缩时间: ${compressTime.toFixed(2)}ms
+                - API时间: ${apiTime.toFixed(2)}ms
+                - 总时间: ${overallTime.toFixed(2)}ms
+                - 性能评级: ${overallTime < 3000 ? '🎉 优秀' : overallTime < 5000 ? '✅ 良好' : '⚠️ 较慢'}`);
+                
                 return {
                     success: true,
                     data: [{
@@ -191,7 +187,12 @@ async function identifyPlantWithOpenRouter(imageData) {
                         habits: plantInfo.habits || '生长习性',
                         care: plantInfo.care || '养护建议',
                         fun_fact: plantInfo.fun_fact || '',
-                        confidence: 0.95 // OpenRouter API的置信度
+                        confidence: plantInfo.confidence || 0.95,
+                        performance: {
+                            compressTime: Math.round(compressTime),
+                            apiTime: Math.round(apiTime),
+                            totalTime: Math.round(overallTime)
+                        }
                     }]
                 };
             } catch (parseError) {
@@ -364,12 +365,20 @@ function showPlantResult(result) {
                     <div class="bg-blue-50 p-3 rounded-lg">
                         <p class="text-sm text-blue-700">
                             <i class="fas fa-info-circle mr-2"></i>
-                            识别结果由OpenRouter -GPT4o模型提供
+                            识别结果由OpenRouter GPT-4o模型提供
                         </p>
                         <p class="text-xs text-blue-600 mt-1">
                             <i class="fas fa-camera mr-1"></i>
                             基于 [OpenRouter API](https://openrouter.ai/docs/quickstart) 构建
                         </p>
+                        ${plantData.performance ? `
+                        <div class="text-xs text-blue-600 mt-2 border-t pt-2">
+                            <div class="flex justify-between">
+                                <span>⚡ 处理时间: ${plantData.performance.totalTime}ms</span>
+                                <span class="${plantData.performance.totalTime < 3000 ? 'text-green-600' : plantData.performance.totalTime < 5000 ? 'text-yellow-600' : 'text-red-600'}">${plantData.performance.totalTime < 3000 ? '🎉 优秀' : plantData.performance.totalTime < 5000 ? '✅ 良好' : '⚠️ 较慢'}</span>
+                            </div>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
             </div>
@@ -419,7 +428,7 @@ function showPlantResult(result) {
     }
 }
 
-// 图片压缩和增强函数
+// 优化后的图片压缩函数 - 移除慢速的对比度增强
 function compressImage(base64String, maxWidth, maxHeight, quality) {
     return new Promise((resolve) => {
         const img = new Image();
@@ -429,47 +438,24 @@ function compressImage(base64String, maxWidth, maxHeight, quality) {
             
             // 计算压缩后的尺寸，保持宽高比
             let { width, height } = img;
-            if (width > height) {
-                if (width > maxWidth) {
-                    height = (height * maxWidth) / width;
-                    width = maxWidth;
-                }
-            } else {
-                if (height > maxHeight) {
-                    width = (width * maxHeight) / height;
-                    height = maxHeight;
-                }
+            const ratio = Math.min(maxWidth / width, maxHeight / height);
+            
+            if (ratio < 1) {
+                width *= ratio;
+                height *= ratio;
             }
             
             canvas.width = width;
             canvas.height = height;
             
-            // 设置图像平滑
+            // 使用高质量插值但不做复杂处理
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
             
-            // 绘制压缩后的图片
+            // 直接绘制压缩后的图片
             ctx.drawImage(img, 0, 0, width, height);
             
-            // 尝试增强图像对比度和清晰度
-            try {
-                const imageData = ctx.getImageData(0, 0, width, height);
-                const data = imageData.data;
-                
-                // 简单的对比度增强
-                for (let i = 0; i < data.length; i += 4) {
-                    // 增强对比度
-                    data[i] = Math.min(255, Math.max(0, (data[i] - 128) * 1.2 + 128));     // R
-                    data[i + 1] = Math.min(255, Math.max(0, (data[i + 1] - 128) * 1.2 + 128)); // G
-                    data[i + 2] = Math.min(255, Math.max(0, (data[i + 2] - 128) * 1.2 + 128)); // B
-                }
-                
-                ctx.putImageData(imageData, 0, 0);
-            } catch (e) {
-                console.log('图像增强失败，使用原始图像:', e);
-            }
-            
-            // 转换为base64，使用指定质量
+            // 转换为base64
             const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
             resolve(compressedBase64);
         };

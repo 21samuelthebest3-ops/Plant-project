@@ -1,0 +1,270 @@
+/* 移动端优化样式 */
+
+/* 基础响应式设计 */
+body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    color: #333;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* 容器适配 */
+.container {
+    max-width: 100%;
+    padding: 0 16px;
+}
+
+/* 植物图片容器适配 */
+.plant-image-container {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+    .plant-image-container {
+        width: 200px;
+        height: 200px;
+    }
+}
+
+.plant-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* 按钮样式优化 */
+.btn {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px; /* 确保触摸目标足够大 */
+}
+
+.btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 主要按钮颜色 */
+.bg-green-500 {
+    background-color: #10b981;
+}
+
+.bg-blue-500 {
+    background-color: #3b82f6;
+}
+
+.bg-yellow-500 {
+    background-color: #f59e0b;
+}
+
+.bg-gray-500 {
+    background-color: #6b7280;
+}
+
+.btn:hover.bg-green-500 {
+    background-color: #059669;
+}
+
+.btn:hover.bg-blue-500 {
+    background-color: #2563eb;
+}
+
+.btn:hover.bg-yellow-500 {
+    background-color: #d97706;
+}
+
+/* 卡片样式 */
+.bg-white {
+    background-color: white;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* 提示框样式 */
+#toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: calc(100vw - 40px);
+    text-align: center;
+    font-size: 14px;
+}
+
+/* 拍照区域样式 */
+#camera-section {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#camera-video {
+    max-height: 300px;
+    width: 100%;
+}
+
+#preview-image {
+    max-height: 300px;
+    width: 100%;
+}
+
+/* 响应式网格 */
+.grid-cols-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+/* 移动端特定优化 */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    .py-4 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.5rem;
+    }
+    
+    .text-lg {
+        font-size: 1.125rem;
+    }
+    
+    .space-y-4 > * + * {
+        margin-top: 1rem;
+    }
+    
+    .py-4 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    /* 按钮间距优化 */
+    .max-w-md {
+        max-width: 100%;
+    }
+    
+    /* 植物切换按钮位置调整 */
+    .plant-image-container .btn {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 480px) {
+    .plant-image-container {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    .py-4 {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+    
+    .container {
+        padding: 0 8px;
+    }
+}
+
+/* 横屏模式优化 */
+@media (orientation: landscape) and (max-height: 600px) {
+    .plant-image-container {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .py-4 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    #camera-video,
+    #preview-image {
+        max-height: 200px;
+    }
+}
+
+/* 确保触摸友好 */
+button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* 隐藏滚动条但保持功能 */
+.overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+    width: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.5);
+    border-radius: 2px;
+}
+
+/* 加载动画 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fadeIn {
+    animation: fadeIn 0.5s ease-out;
+}

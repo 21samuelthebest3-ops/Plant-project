@@ -8,8 +8,8 @@ async function openCamera() {
         stream = await navigator.mediaDevices.getUserMedia({ 
             video: { 
                 facingMode: 'environment', // 优先使用后置摄像头
-                width: { ideal: 1280 },
-                height: { ideal: 720 }
+                width: { ideal: 640 },    // 降低默认分辨率以提高性能
+                height: { ideal: 480 }
             } 
         });
         

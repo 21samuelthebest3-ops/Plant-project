@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>植物识别快速测试</title>
+    <script src="config.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+        .test-btn { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .test-btn:disabled { background: #cccccc; }
+        .result { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        #preview { max-width: 300px; max-height: 300px; margin: 10px 0; }
+        .performance { background: #f0f8ff; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🌿 植物识别快速测试</h1>
+    
+    <div>
+        <h3>选择测试图片</h3>
+        <input type="file" id="imageInput" accept="image/*">
+        <img id="preview" style="display:none;">
+    </div>
+    
+    <div>
+        <button id="testBtn" class="test-btn" disabled>开始植物识别</button>
+        <button id="roseTestBtn" class="test-btn">测试 rose.jpeg</button>
+    </div>
+    
+    <div id="performance" class="performance" style="display:none;"></div>
+    <div id="result" class="result" style="display:none;"></div>
+
+    <script src="js/photo-recognition-extra.js"></script>
+    <script>
+        let selectedImageData = null;
+        
+        // 图片选择
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedImageData = e.target.result;
+                const preview = document.getElementById('preview');
+                preview.src = selectedImageData;
+                preview.style.display = 'block';
+                document.getElementById('testBtn').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        // 测试自定义图片
+        document.getElementById('testBtn').addEventListener('click', async function() {
+            if (!selectedImageData) return;
+            await runPlantTest(selectedImageData, '自定义图片');
+        });
+        
+        // 测试 rose.jpeg
+        document.getElementById('roseTestBtn').addEventListener('click', async function() {
+            try {
+                // 获取 rose.jpeg
+                const response = await fetch('public/rose.jpeg');
+                const blob = await response.blob();
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    await runPlantTest(e.target.result, 'rose.jpeg');
+                };
+                reader.readAsDataURL(blob);
+            } catch (error) {
+                document.getElementById('result').innerHTML = `<div style="color: red;">加载 rose.jpeg 失败: ${error.message}</div>`;
+                document.getElementById('result').style.display = 'block';
+            }
+        });
+        
+        async function runPlantTest(imageData, imageName) {
+            const resultDiv = document.getElementById('result');
+            const perfDiv = document.getElementById('performance');
+            
+            resultDiv.innerHTML = `<div>🔄 正在识别 ${imageName}...</div>`;
+            resultDiv.style.display = 'block';
+            perfDiv.style.display = 'none';
+            
+            const startTime = performance.now();
+            
+            try {
+                const result = await identifyPlantWithOpenRouter(imageData);
+                const totalTime = performance.now() - startTime;
+                
+                if (result && result.success && result.data && result.data.length > 0) {
+                    const plant = result.data[0];
+                    
+                    resultDiv.innerHTML = `
+                        <h3>✅ 识别成功!</h3>
+                        <p><strong>植物名称:</strong> ${plant.name}</p>
+                        <p><strong>英文名:</strong> ${plant.english_name || 'N/A'}</p>
+                        <p><strong>类型:</strong> ${plant.type || 'N/A'}</p>
+                        <p><strong>特征:</strong> ${plant.features || 'N/A'}</p>
+                        <p><strong>养护:</strong> ${plant.care || 'N/A'}</p>
+                        <p><strong>置信度:</strong> ${plant.confidence || 'N/A'}</p>
+                    `;
+                    
+                    perfDiv.innerHTML = `
+                        <h4>⚡ 性能数据</h4>
+                        <p>总耗时: ${totalTime.toFixed(2)}ms</p>
+                        <p>性能评级: ${totalTime < 3000 ? '🎉 优秀' : totalTime < 5000 ? '✅ 良好' : '⚠️ 较慢'}</p>
+                        ${plant.performance ? `
+                        <p>压缩耗时: ${plant.performance.compressTime}ms</p>
+                        <p>API耗时: ${plant.performance.apiTime}ms</p>
+                        ` : ''}
+                    `;
+                    perfDiv.style.display = 'block';
+                } else {
+                    resultDiv.innerHTML = `<div style="color: red;">❌ 识别失败: ${JSON.stringify(result)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div style="color: red;">❌ 错误: ${error.message}</div>`;
+                console.error('识别错误:', error);
+            }
+        }
+    </script>
+</body>
+</html>

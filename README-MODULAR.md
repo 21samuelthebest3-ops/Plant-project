@@ -19,7 +19,7 @@ Plant-project/
 │   ├── coze-sdk.js              # Coze SDK配置
 │   └── app.js                   # 主应用逻辑和事件监听
 ├── config.js                    # 配置文件
-├── sounds/                      # 音效文件
+├── sounds/                      # 音效文件\
 ├── public/                      # 静态资源
 └── legacy/                      # 旧版本文件
 ```

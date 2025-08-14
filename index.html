@@ -3,52 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>植物陪伴应用</title>
+    <title>我的植物小伙伴</title>
     <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.10/libs/cn/index.js"></script>
     <script src="https://cdn.tailwindcss.com/3.3.3"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/mobile-styles.css">
     <script src="config.js"></script>
 </head>
 <body>
-    <!-- 顶部导航栏 -->
-    <div id="navbar" class="py-3 px-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold">植物陪伴应用</h1>
-                <p class="text-xs text-gray-500">扣子空间 | AI办公助手 - 复杂任务高效处理</p>
-            </div>
-            <div class="flex space-x-4">
-                <button class="nav-btn px-3 py-2 font-medium" data-target="home">主页</button>
-                <button class="nav-btn px-3 py-2 font-medium" data-target="favorites">收藏</button>
-                <button class="nav-btn px-3 py-2 font-medium" data-target="tasks">任务</button>
-                <button class="nav-btn px-3 py-2 font-medium" data-target="settings">设置</button>
-                <button class="nav-btn px-3 py-2 font-medium" data-target="photo-generate">拍照生成</button>
-            </div>
-        </div>
+    <!-- 顶部标题 -->
+    <div class="py-4 px-4 text-center">
+        <h1 class="text-2xl font-bold text-green-700">我的植物小伙伴</h1>
+        <p class="text-sm text-gray-600 mt-1">拍照识别·智能对话·养护记录</p>
     </div>
 
-    <!-- 主页 -->
-    <section id="home" class="page active container mx-auto py-8 px-4 mt-16">
-        <div class="bg-white rounded-xl shadow-md overflow-hidden plant-card max-w-2xl mx-auto">
+    <!-- 主页面 -->
+    <div class="container mx-auto py-4 px-4">
+        <!-- 植物展示卡片 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden max-w-md mx-auto mb-6">
             <div class="p-6 text-center">
-                <h2 class="text-2xl font-bold text-green-700 mb-4">我的植物小伙伴</h2>
-                
-                <div class="flex justify-center space-x-8 mb-6">
-                    <div class="text-center">
-                        <p class="text-gray-500">陪伴天数</p>
-                        <p id="companion-days" class="text-xl font-bold text-green-600">1天</p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-gray-500">连续陪伴</p>
-                        <p id="streak-days" class="text-xl font-bold text-green-600">0天</p>
-                    </div>
-                </div>
-                
                 <div class="mb-6 relative">
                     <div class="plant-image-container">
-                        <img id="plant-image" src="https://s.coze.cn/image/jCzDWIXDRv8" alt="向日葵" class="plant-image">
-                        <video id="plant-video" class="plant-image hidden"></video>
+                        <img id="plant-image" src="https://s.coze.cn/image/IBl8j7eurhQ" alt="苔藓" class="plant-image">
                         <button id="prev-plant" class="btn absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-white shadow flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed">
                             <i class="fas fa-chevron-left"></i>
                         </button>
@@ -56,440 +32,94 @@
                             <i class="fas fa-chevron-right"></i>
                         </button>
                     </div>
-                    <p id="plant-name" class="text-xl font-medium mt-4 text-green-600">向日葵</p>
+                    <p id="plant-name" class="text-xl font-medium mt-4 text-green-600">苔藓</p>
                 </div>
                 
-                <div class="flex flex-wrap justify-center gap-3">
-                    <button id="talk-btn" class="btn btn-primary text-white px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-comment-dots mr-2"></i> 和<span id="current-plant-name">向日葵</span>说话
-                    </button>
-                    <button id="favorite-btn" class="btn bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center relative">
-                        <i class="fas fa-heart mr-2"></i> 收藏
-                    </button>
-                    <button id="add-btn" class="btn btn-primary text-white px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-plus mr-2"></i> 新增
-                    </button>
-                    <button id="task-btn" class="btn bg-yellow-500 text-white px-4 py-2 rounded-lg flex items-center relative">
-                        <i class="fas fa-tasks mr-2"></i> 任务
-                    </button>
-                    <button id="settings-btn" class="btn btn-primary text-white px-4 py-2 rounded-lg flex items-center">
-                        <i class="fas fa-cog mr-2"></i> 设置
-                    </button>
+                <div class="text-center mb-6">
+                    <p class="text-gray-500">连续浇水</p>
+                    <p id="streak-days" class="text-2xl font-bold text-green-600">0天</p>
                 </div>
             </div>
         </div>
         
-        <!-- 每日任务板块 -->
-        <div class="bg-white rounded-xl shadow-md p-6 plant-card mt-6 max-w-2xl mx-auto">
-            <h3 class="text-xl font-bold text-green-700 mb-1 flex items-center">
-                <i class="fas fa-calendar-day mr-2"></i> 每日任务
-            </h3>
-            <p class="text-xs text-gray-500 mb-4">完成任务可提升植物成长速度</p>
-            <div class="mb-4">
-                <p id="task-progress" class="text-gray-600 mb-1">今日任务完成：0/0</p>
-                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                    <div class="bg-green-500 h-2.5 rounded-full" style="width: 0%"></div>
-                </div>
-            </div>
-            <p id="streak-counter" class="text-gray-600 text-sm" style="color: #666666;">连续打卡 <span id="streak-days-counter" class="font-bold">0</span>天</p>
+        <!-- 功能按钮 -->
+        <div class="max-w-md mx-auto space-y-4">
+            <button id="camera-btn" class="w-full btn bg-green-500 text-white py-4 rounded-xl text-lg font-medium flex items-center justify-center">
+                <i class="fas fa-camera mr-3"></i> 拍照识别植物
+            </button>
             
-            <button id="check-in-btn" class="btn btn-primary text-white w-40 h-10 rounded-full mx-auto mt-4 flex items-center justify-center">
-                点击签到
+            <button id="talk-btn" class="w-full btn bg-blue-500 text-white py-4 rounded-xl text-lg font-medium flex items-center justify-center">
+                <i class="fas fa-comment-dots mr-3"></i> 和<span id="current-plant-name">植物</span>聊天
+            </button>
+            
+            <button id="water-btn" class="w-full btn bg-yellow-500 text-white py-4 rounded-xl text-lg font-medium flex items-center justify-center">
+                <i class="fas fa-tint mr-3"></i> 浇水记录
             </button>
         </div>
-    </section>
+    </div>
 
-    <!-- 收藏页面 -->
-    <section id="favorites" class="page container mx-auto py-8 px-4 mt-16">
-        <div class="bg-white rounded-xl shadow-md p-6 plant-card max-w-2xl mx-auto">
-            <div class="flex items-center mb-4">
-                <button id="back-btn-favorites" class="btn text-gray-500 hover:text-gray-700 mr-4">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <h3 class="text-xl font-bold text-green-700">收藏与重要事项</h3>
-            </div>
-            <p class="text-gray-600 mb-4">这里可以查看您收藏的重要事项和植物</p>
-            
-            <div class="flex border-b mb-4">
-                <button id="favorites-tab" class="btn px-4 py-2 border-b-2 border-green-500 text-green-500 font-medium">我的最爱</button>
-                <button id="important-tab" class="btn px-4 py-2 text-gray-500">重要提醒</button>
-            </div>
-            
-            <!-- 植物分类标签 -->
-            <div id="plant-tabs" class="flex mb-4 overflow-x-auto pb-2">
-                <div class="plant-tab active" data-plant="all">全部植物</div>
-                <div class="plant-tab" data-plant="苔藓">苔藓</div>
-                <div class="plant-tab" data-plant="仙人掌">仙人掌</div>
-                <div class="plant-tab" data-plant="富贵竹">富贵竹</div>
-                <div class="plant-tab" data-plant="玫瑰">玫瑰</div>
-            </div>
-            
-            <div id="favorites-content" class="text-center py-8">
-                <i class="fas fa-heart text-4xl text-gray-300 mb-2"></i>
-                <p class="text-gray-500">暂无收藏，快去添加吧~</p>
-            </div>
-            
-            <div id="important-content" class="hidden task-scroll">
-                <div id="loading-tasks" class="py-4">
-                    <div class="loading-spinner"></div>
-                    <p class="text-center text-gray-500 mt-2">加载中...</p>
-                </div>
-                <div id="tasks-container" class="hidden"></div>
-                <div id="no-tasks" class="hidden text-center py-8">
-                    <i class="fas fa-exclamation-circle text-4xl text-gray-300 mb-2"></i>
-                    <p class="text-gray-500">暂无重要提醒</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 任务页面 -->
-    <section id="tasks" class="page container mx-auto py-8 px-4 mt-16">
-        <div class="bg-white rounded-xl shadow-md p-6 plant-card max-w-2xl mx-auto">
-            <div class="flex items-center mb-4">
-                <button id="back-btn-tasks" class="btn text-gray-500 hover:text-gray-700 mr-4">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <h3 class="text-xl font-bold text-green-700">任务列表</h3>
-            </div>
-            
-            <div id="tasks-list" class="task-scroll">
-                <div id="loading-tasks-list" class="py-4">
-                    <div class="loading-spinner"></div>
-                    <p class="text-center text-gray-500 mt-2">加载中...</p>
-                </div>
-                <div id="tasks-list-container" class="hidden"></div>
-                <div id="no-tasks-list" class="hidden text-center py-8">
-                    <i class="fas fa-exclamation-circle text-4xl text-gray-300 mb-2"></i>
-                    <p class="text-gray-500">暂无任务</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 新增任务页面 -->
-    <section id="add-task" class="page container mx-auto py-8 px-4 mt-16">
-        <div class="bg-white rounded-xl shadow-md p-6 plant-card max-w-2xl mx-auto">
-            <div class="flex items-center mb-4">
-                <button id="back-btn-add" class="btn text-gray-500 hover:text-gray-700 mr-4">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <h3 class="text-xl font-bold text-green-700">新增任务</h3>
-            </div>
-            <p class="text-gray-600 mb-4">添加新的陪伴任务</p>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-gray-700 mb-1">任务名称</label>
-                    <input id="task-name-input" type="text" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500" placeholder="输入任务名称" required>
-                </div>
-                
-                <div>
-                    <label class="block text-gray-700 mb-1">提醒时间</label>
-                    <div class="flex gap-2">
-                        <input type="date" id="reminder-date" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <input type="time" id="reminder-time" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-gray-700 mb-1">重复设置</label>
-                    <select id="repeat-setting" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <option value="none">不重复</option>
-                        <option value="daily">每天</option>
-                        <option value="weekly">每周</option>
-                    </select>
-                </div>
-                
-                <button id="add-task-btn" class="btn btn-primary text-white w-full py-2 rounded-lg mt-2">
-                    添加任务
+    <!-- 拍照识别功能区域 -->
+    <div id="camera-section" class="hidden container mx-auto py-4 px-4">
+        <div class="bg-white rounded-xl shadow-md p-6 max-w-md mx-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-green-700">拍照识别植物</h3>
+                <button id="close-camera-section" class="btn text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-        </div>
-    </section>
-
-    <!-- 设置页面 -->
-    <section id="settings" class="page container mx-auto py-8 px-4 mt-16">
-        <div class="bg-white rounded-xl shadow-md p-6 plant-card max-w-2xl mx-auto">
-            <div class="flex items-center mb-4">
-                <button id="back-btn-settings" class="btn text-gray-500 hover:text-gray-700 mr-4">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <h3 class="text-xl font-bold text-green-700">设置与特殊状态</h3>
-            </div>
-            <p class="text-gray-600 mb-4">个性化您的植物陪伴体验</p>
             
-            <div class="space-y-4">
-                <h4 class="font-semibold text-gray-700">基本设置</h4>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">语音陪伴</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="voice-toggle" class="sr-only peer" checked>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                    </label>
-                </div>
-                
-                <div class="setting-divider"></div>
-                
-                <h4 class="font-semibold text-gray-700">提醒设置</h4>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">每日提醒</span>
-                    </div>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="reminder-toggle" class="sr-only peer" checked>
-                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
-                    </label>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">提醒音效</span>
-                    </div>
-                    <select id="reminder-sound" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <option value="sound1">自然音效</option>
-                        <option value="sound2">铃声音效</option>
-                        <option value="sound3">鸟鸣音效</option>
-                    </select>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">弹窗停留时间</span>
-                    </div>
-                    <select id="popup-duration" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <option value="5">5秒</option>
-                        <option value="10">10秒</option>
-                        <option value="manual">手动关闭</option>
-                    </select>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">音量控制</span>
-                    </div>
-                    <input type="range" id="volume-control" min="0" max="1" step="0.1" value="0.7" class="volume-slider">
-                </div>
-                
-                <div class="setting-divider"></div>
-                
-                <h4 class="font-semibold text-gray-700">语音设置</h4>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">语音音色</span>
-                    </div>
-                    <select id="voice-style" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <option value="girl">邻家女孩</option>
-                        <option value="cute">撒娇学妹</option>
-                    </select>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">语速</span>
-                    </div>
-                    <select id="voice-speed" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <option value="normal">正常</option>
-                        <option value="fast">稍快</option>
-                        <option value="slow">稍慢</option>
-                    </select>
-                </div>
-                
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-2">音调</span>
-                    </div>
-                    <select id="voice-pitch" class="px-3 py-2 border rounded-lg focus:outline-none focus:border-green-500">
-                        <option value="normal">正常</option>
-                        <option value="high">稍高</option>
-                        <option value="low">稍低</option>
-                    </select>
-                </div>
-                
-                <button id="voice-test-btn" class="btn btn-primary text-white w-full py-2 rounded-lg mt-2">
-                    <i class="fas fa-volume-up mr-2"></i> 语音测试
-                </button>
-                
-                <div id="permission-alert" class="permission-alert hidden">
-                    <i class="fas fa-exclamation-triangle mr-2"></i>
-                    <span>无法播放声音，请检查设备音量和浏览器权限</span>
-                </div>
-                
-                <div class="setting-divider"></div>
-                
-                <h4 class="font-semibold text-gray-700">提醒历史</h4>
-                <div id="reminder-history" class="max-h-40 overflow-y-auto">
-                    <div class="reminder-history-item">
-                        <div class="text-sm font-medium">今日签到提醒</div>
-                        <div class="text-xs text-gray-500">2024-03-20 09:00</div>
-                    </div>
-                    <div class="reminder-history-item">
-                        <div class="text-sm font-medium">重要事项提醒</div>
-                        <div class="text-xs text-gray-500">2024-03-19 15:30</div>
-                    </div>
-                    <div class="reminder-history-item">
-                        <div class="text-sm font-medium">每日任务提醒</div>
-                        <div class="text-xs text-gray-500">2024-03-19 10:00</div>
-                    </div>
-                </div>
-                
-                <button id="reset-settings" class="btn bg-gray-200 text-gray-700 w-full py-2 rounded-lg mt-4">
-                    恢复默认设置
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- 拍照生成页面 -->
-    <section id="photo-generate" class="page container mx-auto py-8 px-4 mt-16">
-        <div class="bg-white rounded-xl shadow-md p-6 plant-card max-w-2xl mx-auto">
-            <div class="flex items-center mb-4">
-                <button id="back-btn-photo" class="btn text-gray-500 hover:text-gray-700 mr-4">
-                    <i class="fas fa-arrow-left"></i>
-                </button>
-                <h3 class="text-xl font-bold text-green-700">拍照生成</h3>
-            </div>
-            <p class="text-gray-600 mb-4">通过拍照识别植物并生成相关信息</p>
-            
-            <div class="text-center py-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- 拍照识别按钮 -->
-                    <div class="bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl border-2 border-green-200 hover:border-green-300 transition-all duration-300 cursor-pointer" id="camera-btn">
-                        <div class="text-green-600 mb-4">
-                            <i class="fas fa-camera fa-3x"></i>
-                        </div>
-                        <h4 class="text-lg font-semibold text-green-700 mb-2">拍照识别</h4>
-                        <p class="text-sm text-green-600">打开摄像头识别植物</p>
-                    </div>
+            <div class="text-center">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <button id="camera-open-btn" class="bg-green-50 p-4 rounded-lg border-2 border-green-200 hover:border-green-300 transition-all">
+                        <i class="fas fa-camera text-green-600 text-2xl mb-2"></i>
+                        <p class="text-sm font-medium text-green-700">打开相机</p>
+                    </button>
                     
-                    <!-- 相册按钮 -->
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl border-2 border-blue-200 hover:border-blue-300 transition-all duration-300 cursor-pointer" id="gallery-btn">
-                        <div class="text-blue-600 mb-4">
-                            <i class="fas fa-images fa-3x"></i>
-                        </div>
-                        <h4 class="text-lg font-semibold text-blue-700 mb-2">相册</h4>
-                        <p class="text-sm text-blue-600">从相册选择照片</p>
-                    </div>
+                    <button id="gallery-btn" class="bg-blue-50 p-4 rounded-lg border-2 border-blue-200 hover:border-blue-300 transition-all">
+                        <i class="fas fa-images text-blue-600 text-2xl mb-2"></i>
+                        <p class="text-sm font-medium text-blue-700">选择照片</p>
+                    </button>
                 </div>
                 
-                <!-- 测试按钮 -->
-                <div class="text-center">
-                    <button id="test-api-btn" class="btn bg-purple-500 text-white px-6 py-2 rounded-lg hover:bg-purple-600 transition-colors">
-                        <i class="fas fa-vial mr-2"></i>测试API连接
-                    </button>
-                    <button id="test-plant-btn" class="btn bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 transition-colors ml-4">
-                        <i class="fas fa-leaf mr-2"></i>测试植物识别
-                    </button>
-                    <p class="text-xs text-gray-500 mt-2">用于测试OpenRouter API连接状态和植物识别功能</p>
-                </div>
-            
-                <!-- 摄像头预览区域 -->
-                <div id="camera-preview" class="hidden mt-6">
-                    <video id="camera-video" class="w-full max-w-md mx-auto rounded-lg border-2 border-green-300" autoplay playsinline></video>
-                    <div class="flex justify-center space-x-4 mt-4">
-                        <button id="capture-btn" class="btn btn-primary text-white px-6 py-2 rounded-lg">
+                <!-- 摄像头预览 -->
+                <div id="camera-preview" class="hidden">
+                    <video id="camera-video" class="w-full rounded-lg border-2 border-green-300 mb-4" autoplay playsinline></video>
+                    <div class="flex justify-center space-x-4">
+                        <button id="capture-btn" class="btn bg-green-500 text-white px-6 py-2 rounded-lg">
                             <i class="fas fa-camera mr-2"></i>拍照
                         </button>
                         <button id="close-camera-btn" class="btn bg-gray-500 text-white px-6 py-2 rounded-lg">
-                            <i class="fas fa-times mr-2"></i>关闭
+                            关闭相机
                         </button>
                     </div>
                 </div>
                 
-                <!-- 照片预览区域 -->
-                <div id="photo-preview" class="hidden mt-6">
-                    <img id="preview-image" class="w-full max-w-md mx-auto rounded-lg border-2 border-blue-300" alt="预览图片">
-                    <div class="flex justify-center space-x-4 mt-4">
-                        <button id="analyze-btn" class="btn btn-primary text-white px-6 py-2 rounded-lg">
-                            <i class="fas fa-search mr-2"></i>识别分析
+                <!-- 照片预览 -->
+                <div id="photo-preview" class="hidden">
+                    <img id="preview-image" class="w-full rounded-lg border-2 border-blue-300 mb-4" alt="预览图片">
+                    <div class="flex justify-center space-x-4">
+                        <button id="analyze-btn" class="btn bg-blue-500 text-white px-6 py-2 rounded-lg">
+                            <i class="fas fa-search mr-2"></i>识别植物
                         </button>
                         <button id="close-preview-btn" class="btn bg-gray-500 text-white px-6 py-2 rounded-lg">
-                            <i class="fas fa-times mr-2"></i>关闭
+                            重新选择
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    </section>
-
-    <!-- 对话模态框 -->
-    <div id="talk-modal" class="modal">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-green-700">和植物说话</h3>
-                <button id="close-talk-modal" class="btn text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="relative">
-                <div class="switch-notice" id="switch-notice">已切换到向日葵的聊天</div>
-            </div>
-            <div id="talk-messages" class="mb-4 max-h-60 overflow-y-auto">
-                <div class="bg-green-100 p-3 rounded-lg mb-2">
-                    <p class="text-sm">和你的向日葵打个招呼吧~</p>
-                </div>
-            </div>
-            <div class="flex">
-                <input id="talk-input" type="text" class="flex-grow px-3 py-2 border rounded-l-lg focus:outline-none focus:border-green-500" placeholder="和你的向日葵说点什么吧...">
-                <button id="send-talk-btn" class="btn btn-primary text-white px-4 py-2 rounded-r-lg">
-                    发送
-                </button>
-            </div>
-        </div>
     </div>
 
-    <!-- 提醒模态框 -->
-    <div id="reminder-modal" class="modal">
-        <div class="modal-content alert-shake">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-green-700">提醒</h3>
-                <button id="close-reminder-modal" class="btn text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div id="reminder-content" class="mb-4">
-                <p id="reminder-message" class="text-gray-700"></p>
-            </div>
-            <div class="flex justify-between">
-                <button id="handle-later-btn" class="btn bg-gray-200 text-gray-700 px-4 py-2 rounded-lg">
-                    稍后处理
-                </button>
-                <button id="handle-now-btn" class="btn btn-primary text-white px-4 py-2 rounded-lg">
-                    立即处理
-                </button>
-            </div>
-            <audio id="reminder-sound-player" src=""></audio>
-        </div>
+    <!-- 简化的提示框 -->
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg opacity-0 transition-opacity z-50">
+        提示信息
     </div>
-
-    <!-- 提示框 -->
-    <div id="toast" class="toast">
-        已取消收藏
-    </div>
-
-    <!-- 页脚 -->
-    <footer class="bg-gray-100 py-6 px-4 mt-12">
-        <div class="container mx-auto text-center text-gray-600">
-            <p>created by <a href="https://space.coze.cn" class="text-green-600 hover:underline">coze space</a></p>
-            <p class="text-sm mt-1">页面内容均由 AI 生成，仅供参考</p>
-        </div>
-    </footer>
 
     <!-- JavaScript 文件 -->
     <script src="js/data.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/plants.js"></script>
-    <script src="js/tasks.js"></script>
-    <script src="js/favorites.js"></script>
-    <script src="js/settings.js"></script>
     <script src="js/photo-recognition.js"></script>
     <script src="js/photo-recognition-extra.js"></script>
     <script src="js/coze-sdk.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/app-simple.js"></script>
 </body>
 </html>
